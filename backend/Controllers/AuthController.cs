@@ -23,14 +23,36 @@ public class AuthController(ApplicationDbContext _dbContext, CookieService _cook
         return Ok(new { message = "success!"});
     }
 
+    // Login the user.
+
+    [HttpPost]
+    [Route("login")]
+    [CsrfHeader]
+    public async Task<ActionResult> Login(LoginDto dto)
+    {
+        User user = await _dbContext.Users.FirstOrDefaultAsync(searchedUser => searchedUser.Email == dto.Email);
+
+        if (user is null) return Unauthorized(new { message = "Invalid credentials." });
+
+        var checkHash = new PasswordHasher<User>().VerifyHashedPassword(user, user.PasswordHash, dto.Password);
+
+        if (checkHash == PasswordVerificationResult.Failed) return Unauthorized(new { message = "Invalid credentials." });
+        
+        if(!await _cookie.CreateCookies(user)) return Unauthorized(new {  message = "Couldnt store cookies." });
+
+        await _dbContext.SaveChangesAsync();
+
+        return Ok(new { message = "User successfully logged in!" });
+    }
+
     // Register the user.
 
     [HttpPost]
     [Route("register")]
     [CsrfHeader]
-    public async Task<ActionResult> register(RegisterDto dto)
+    public async Task<ActionResult> Register(RegisterDto dto)
     {
-        if ( await _dbContext.Users.AnyAsync(searchedUser => searchedUser.Email == dto.Email)) return Conflict(new { message = "Email already in use." });
+        if (await _dbContext.Users.AnyAsync(searchedUser => searchedUser.Email == dto.Email)) return Conflict(new { message = "Email already in use." });
 
         var user = new User
         {

@@ -11,6 +11,4 @@ public class RefreshToken
     public required User User { get; set; }
 
     public DateTime Expires { get; set; }
-
-    public bool IsRevoked { get; set; } = false;
 }
