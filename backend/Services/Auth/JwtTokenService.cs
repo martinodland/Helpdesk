@@ -7,7 +7,7 @@ namespace HelpDesk.Services.Auth;
 
 public class JwtTokenService(IConfiguration _config)
 {
-    public async Task<string> CreateJwtToken(int accountId)
+    public async Task<string> CreateJwtToken(int accountId, string accountRole)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -21,7 +21,8 @@ public class JwtTokenService(IConfiguration _config)
         {
             Subject = new ClaimsIdentity(new[]
             {
-               new Claim("id", accountId.ToString()), 
+               new Claim("id", accountId.ToString()),
+               new Claim("role", accountRole),
             }),
             Expires = DateTime.UtcNow.AddMinutes(15),
             Issuer = issuer,

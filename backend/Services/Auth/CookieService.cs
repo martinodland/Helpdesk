@@ -6,11 +6,11 @@ public class CookieService(ApplicationDbContext _dbContext, IHttpContextAccessor
 {
     // Create cookies.
 
-    public async Task<bool> CreateCookies(User User)
+    public async Task<bool> CreateCookies(User user)
     {
         try
         {
-            var jwtToken = await _jwtToken.CreateJwtToken(User.Id);
+            var jwtToken = await _jwtToken.CreateJwtToken(user.Id, user.Role);
 
             _context.HttpContext.Response.Cookies.Append("accessToken", jwtToken, new CookieOptions
             {
@@ -33,8 +33,8 @@ public class CookieService(ApplicationDbContext _dbContext, IHttpContextAccessor
             await _dbContext.RefreshTokens.AddAsync(new RefreshToken
             {
                 TokenHash = _refreshToken.HashRefreshToken(refreshToken),
-                UserId = User.Id,
-                User = User,
+                UserId = user.Id,
+                User = user,
                 Expires = DateTime.UtcNow.AddDays(7)
             });
             

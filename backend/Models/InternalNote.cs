@@ -6,9 +6,15 @@ public class InternalNote
 
     public required int TicketId { get; set; }
 
-    public required int AdminUserId { get; set; }
+    public Ticket? Ticket { get; set; }
 
-    public required string Note { get; set; }
+    public required int UserId { get; set; }
+
+    public required string Description { get; set; }
+
+    public required bool IsPrivate { get; set; } = false;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public DateTime UpdatedAt { get; set; }
 }
