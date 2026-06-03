@@ -1,1 +1,29 @@
 @import "tailwindcss";
+
+@theme {
+
+    /* Background */
+
+    --main-background: #eaeef4;
+    --secondary-background: #ffffff;
+
+    /* Theme */
+
+    --main-theme-color: #2f5fd0;
+    --secondary-theme-color: #1c2740;
+
+    /* Text */
+
+    --main-text-color: #1b2433;
+    --secondary-text-color: #636b7c;
+
+    /* Border */
+
+    --main-background-border: #ffffff;
+    --secondary-background-border: #e3e8ef;
+
+    /* Label */
+
+    --placeholder-color: #a1a8b6;
+    --label-color: #7d8492;
+}

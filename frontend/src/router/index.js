@@ -2,7 +2,13 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 const routes = [
   {
-    path: '/', component: () => import('../pages/Home.vue')
+    path: '/', component: () => import('../pages/Home.vue'), name: 'Dashboard',
+  },
+  {
+    path: '/login', component: () => import('../pages/Login.vue'), name: 'Login',
+  },
+  {
+    path: '/register', component: () => import('../pages/Register.vue'), name: 'Register'
   },
 ];
 
@@ -44,7 +50,7 @@ export async function customFetch(url, method, body = null){
   });
 
   if(!refreshResponse.ok){
-    window.location.href = "/login";
+    router.push({ name: 'Login'});
 
     return refreshResponse;
   }
