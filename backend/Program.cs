@@ -1,4 +1,5 @@
 using System.Text;
+using HelpDesk.Services.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -9,8 +10,6 @@ var builder = WebApplication.CreateBuilder(args);
 // Db connection.
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string" + "'DefaultConnection' not found");
-
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
 
 // Cors.
 
@@ -48,7 +47,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
        {
            OnMessageReceived = request =>
            {
-               request.Token = request.Request.Cookies["JwtToken"];
+               request.Token = request.Request.Cookies["accessToken"];
 
                return Task.CompletedTask;
            }
@@ -59,6 +58,14 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Controllers.
 
 builder.Services.AddControllers();
+
+// DI
+
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddScoped<CookieService>();
+builder.Services.AddScoped<JwtTokenService>();
+builder.Services.AddScoped<RefreshTokenService>();
 
 var app = builder.Build();
 

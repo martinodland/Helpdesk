@@ -11,7 +11,7 @@ async function register(){
     const results = await fetch('http://localhost:5034/auth/register',{
       method: 'POST',
       headers: { 'Content-Type': 'application/json'},
-      body: JSON.stringify({name: "test", email: "test@gmail.com", "password": "test"}),
+      body: JSON.stringify({name: "test", email: "3211@gmail.com", "password": "test"}),
       credentials: 'include'
     });
   
