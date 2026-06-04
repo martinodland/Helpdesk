@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using HelpDesk.Dtos.Auth;
 using HelpDesk.Filters;
 using HelpDesk.Models;
@@ -13,14 +14,18 @@ namespace HelpDesk.Controllers;
 [Route("auth")]
 public class AuthController(ApplicationDbContext _dbContext, CookieService _cookie, IHttpContextAccessor _context, RefreshTokenService _refreshToken): ControllerBase
 {
-    // Check if user is authenticated.
+    // Get logged in user.
 
     [HttpGet]
     [Authorize]
     [Route("me")]
     public async Task<ActionResult> me()
     {
-        return Ok(new { message = "success!"});
+        int userId = int.Parse(User.FindFirstValue("id")!);
+
+        User? user = await _dbContext.Users.FirstOrDefaultAsync(searchedUser => searchedUser.Id == userId);
+
+        return Ok(new { message = "success!", user = user});
     }
 
     // Login the user.
@@ -30,7 +35,7 @@ public class AuthController(ApplicationDbContext _dbContext, CookieService _cook
     [CsrfHeader]
     public async Task<ActionResult> Login(LoginDto dto)
     {
-        User user = await _dbContext.Users.FirstOrDefaultAsync(searchedUser => searchedUser.Email == dto.Email);
+        User? user = await _dbContext.Users.FirstOrDefaultAsync(searchedUser => searchedUser.Email == dto.Email);
 
         if (user is null) return Unauthorized(new { message = "Invalid credentials." });
 

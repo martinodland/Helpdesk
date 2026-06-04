@@ -1,8 +1,15 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
+/**
+ * Routes.
+ */
+
 const routes = [
   {
-    path: '/', component: () => import('../pages/Home.vue'), name: 'Dashboard',
+    path: '/', redirect: { name: 'Login' },
+  },
+  {
+    path: '/overview', component: () => import('../pages/Overview.vue'), name: 'Dashboard',
   },
   {
     path: '/login', component: () => import('../pages/Login.vue'), name: 'Login',
@@ -10,8 +17,17 @@ const routes = [
   {
     path: '/register', component: () => import('../pages/Register.vue'), name: 'Register'
   },
+  {
+    path: '/create', component: () => import('../pages/Create.vue'), name: 'Create',
+  },
+  {
+    path: '/tickets', component: () => import('../pages/Ticket.vue'), name: 'Ticket',
+  }
 ];
 
+/**
+ * Router.
+ */
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -37,7 +53,7 @@ export async function customFetch(url, method, body = null){
     body: body 
   });
 
-  if(response.status !== 401 || url === "auth/refresh"){
+  if(response.status !== 401 || url === "auth/refresh" || url === "auth/login"){
     return response;
   }
 

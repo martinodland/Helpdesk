@@ -1,5 +1,9 @@
 <script setup>
  
+/**
+ * Props.
+ */
+
 const props = defineProps({
     modelValue: {
         default: ''
@@ -25,6 +29,12 @@ const props = defineProps({
         default: false
     }
 });
+
+/**
+ * Define emits. 
+ * 
+ * Says to the parent that he needs to update the form with the modelvalue.
+ */
 
 const emit = defineEmits(['update:modelValue']);
  

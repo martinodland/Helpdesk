@@ -34,7 +34,7 @@ async function login() {
         if(!result.ok){
             return;
         }
-        
+
         router.push({ name: 'Dashboard' });
     }catch(error){
         console.log("error: ", error);
