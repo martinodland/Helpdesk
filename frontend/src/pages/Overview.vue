@@ -4,12 +4,49 @@ import DashboardLayout from '../layout/DashboardLayout.vue';
 import { PlusIcon } from '@heroicons/vue/24/solid';
 import TicketStatusOverviewCard from '@/components/cards/TicketStatusOverviewCard.vue';
 import SingleTicketCard from '@/components/cards/SingleTicketCard.vue';
+import { onMounted, ref } from 'vue';
+import { convertToReadable, customFetch } from '@/router/index.js';
+
+/**
+ * Refs.
+ */
+
+const tickets = ref([]);
 
 /**
  * Stores
  */
 
 const userStore = useUserStore();
+
+/**
+ * Function that retrieves the tickets.
+ */
+
+async function retrieveTickets(){
+  try{
+    const response = await customFetch('tickets', 'GET');
+
+    if(!response.ok){
+      console.log("Failed retrieving tickets: ", response);
+    }
+
+    const data = await response.json();
+
+    tickets.value = data.tickets;
+
+  }catch(error){
+    console.log("Failed retrieving tickets: ", error);
+  }
+}
+
+/**
+ * Run on load.
+ */
+
+onMounted(() => {
+  retrieveTickets();
+});
 
 </script>
 
@@ -37,11 +74,9 @@ const userStore = useUserStore();
           <RouterLink class="text-(--main-theme-color) font-medium" to="/tickets">Se alle (0)</RouterLink>
         </div>
         <div class="overflow-y-auto flex-1 min-h-0">
-          <SingleTicketCard />
-          <SingleTicketCard />
-          <SingleTicketCard />
-          <SingleTicketCard />
-          <SingleTicketCard />
+          <div v-for="ticket in tickets">
+            <SingleTicketCard :ticketId="ticket.id" :ticketStatus="ticket.status" :ticketTitle="ticket.title" :ticketCreated="convertToReadable(ticket.createdAt)" :ticketUpdated="ticket.updatedAt ?? 'Ikke oppdatert'" :ticketPriority="ticket.priority" />
+          </div>
         </div>
       </div>
     </div>

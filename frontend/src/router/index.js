@@ -1,4 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { ref } from 'vue'
+/**
+ * Refs.
+ */
+
+export const previousRouteName = ref(null)
 
 /**
  * Routes.
@@ -21,7 +27,10 @@ const routes = [
     path: '/create', component: () => import('../pages/Create.vue'), name: 'Create',
   },
   {
-    path: '/tickets', component: () => import('../pages/Ticket.vue'), name: 'Ticket',
+    path: '/tickets', component: () => import('../pages/Tickets.vue'), name: 'Tickets',
+  },
+  {
+    path: '/tickets/:id', component: () => import('../pages/Ticket.vue'), name: 'Ticket'
   }
 ];
 
@@ -83,5 +92,26 @@ export async function customFetch(url, method, body = null){
 
   return response;
 }
+
+/**
+ * Make time easily human readable.
+ * 
+ * @param {string} dateString The database time value.
+ */
+
+export function convertToReadable(dateString) {
+  if (!dateString) return 'Ukjent dato';
+  return new Intl.DateTimeFormat('nb-NO', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(dateString));
+}
+
+router.beforeEach((_to, from) => {
+  previousRouteName.value = from.name ?? null
+})
 
 export default router

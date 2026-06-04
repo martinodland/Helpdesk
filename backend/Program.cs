@@ -1,4 +1,5 @@
 using System.Text;
+using HelpDesk.Database;
 using HelpDesk.Services.Auth;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -68,6 +69,15 @@ builder.Services.AddScoped<JwtTokenService>();
 builder.Services.AddScoped<RefreshTokenService>();
 
 var app = builder.Build();
+
+// Seed database
+
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+    DataSeeder.Seed(db);
+}
 
 // Cors
 

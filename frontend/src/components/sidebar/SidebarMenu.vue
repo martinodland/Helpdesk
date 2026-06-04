@@ -4,6 +4,16 @@ import { PlusIcon, ListBulletIcon,RectangleGroupIcon } from '@heroicons/vue/24/o
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
+/**
+ * Route.
+ */
+
+const route = useRoute();
+
+/**
+ * Props.
+ */
+
 const props = defineProps({
     label: {
         type: String,
@@ -19,27 +29,35 @@ const props = defineProps({
     }
 });
 
+/**
+ * Icon for menus.
+ */
+
 const icons = {
     RectangleGroupIcon: RectangleGroupIcon,
     PlusIcon: PlusIcon,
     ListBulletIcon: ListBulletIcon,
 }
 
+/**
+ * Get the icon that should be active.
+ */
+
 const selectedIcon = computed(() => icons[props.icon]);
 
-const route = useRoute();
+/**
+ * Set the active path.
+ */
 
-const isActive = route.path === props.href;
+const isActive = route.path.includes(props.href);
 
 </script>
 
 <template>
     <RouterLink :to="props.href">
-        <div class="text-white flex flex-row gap-4 p-4 cursor-pointer rounded-md"
-            :class="isActive ? 'bg-(--main-theme-color)' : 'hover:bg-white/5 transition duration-100'"
-            >
+        <div class="text-white flex flex-row gap-4 p-4 cursor-pointer rounded-md" :class="isActive ? 'bg-(--main-theme-color)' : 'hover:bg-white/5 transition duration-100'">
             <component :is="selectedIcon" class="size-6 text-white" />
-            {{ props.label }}
+            <p>{{ props.label }}</p>
         </div>
     </RouterLink>
 </template>

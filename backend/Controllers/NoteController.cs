@@ -5,6 +5,7 @@ using HelpDesk.Models;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using HelpDesk.Dtos.Tickets.Notes;
+using HelpDesk.Dtos.Tickets.Notes.Response;
 
 namespace HelpDesk.Controllers;
 
@@ -25,14 +26,14 @@ public class NoteController(ApplicationDbContext _dbContext): ControllerBase
 
         if(userRole == "User")
         {
-            notes = await _dbContext.InternalNotes.Where(searchedNote => searchedNote.TicketId == id && searchedNote.IsPrivate == false).ToListAsync();
+            notes = await _dbContext.InternalNotes.Where(searchedNote => searchedNote.TicketId == id && searchedNote.OnlyAdmin == false).Include(searchedUser => searchedUser.User).ToListAsync();
 
-            return Ok(new { message = "All public notes retrieved successfully!" , notes = notes });
+            return Ok(new { message = "All public notes retrieved successfully!", notes = notes.Select(MapToDto) });
         }
 
-        notes = await _dbContext.InternalNotes.Where(searchedNote => searchedNote.TicketId == id).ToListAsync();
+        notes = await _dbContext.InternalNotes.Where(searchedNote => searchedNote.TicketId == id).Include(searchedUser => searchedUser.User).ToListAsync();
 
-        return Ok(new { message = "All notes retrieved successfully!" , notes = notes });
+        return Ok(new { message = "All notes retrieved successfully!", notes = notes.Select(MapToDto) });
     }
 
     // Create note on ticket.
@@ -49,7 +50,7 @@ public class NoteController(ApplicationDbContext _dbContext): ControllerBase
             TicketId = id,
             UserId = userId,
             Description = dto.Description,
-            IsPrivate = dto.IsPrivate
+            OnlyAdmin = dto.OnlyAdmin
         });
 
         await _dbContext.SaveChangesAsync();
@@ -108,4 +109,15 @@ public class NoteController(ApplicationDbContext _dbContext): ControllerBase
 
         return Ok(new { message = "Note was successfully deleted!" });
     }
+
+    private static ResponseNoteDto MapToDto(InternalNote note) => new()
+    {
+        Id = note.Id,
+        Description = note.Description,
+        OnlyAdmin = note.OnlyAdmin,
+        UserId = note.UserId,
+        WrittenByUser = note.User?.Name ?? "Unknown",
+        CreatedAt = note.CreatedAt,
+        UpdatedAt = note.UpdatedAt
+    };
 }

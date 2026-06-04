@@ -1,8 +1,10 @@
-namespace HelpDesk.Models;
+using HelpDesk.Models;
 
-public class Ticket
+namespace HelpDesk.Dtos.Tickets.Response;
+
+public class ResponseTicketDto
 {
-    public int Id { get; set; }
+     public int Id { get; set; }
 
     public required string Title { get; set; }
 
@@ -12,14 +14,11 @@ public class Ticket
 
     public required string Priority { get; set; }
 
-    public required int CreadtedByUserId { get; set; }
-
     public User? CreatedByUser { get; set; }
 
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public required DateTime CreatedAt { get; set; }
 
     public DateTime? UpdatedAt { get; set; }
 
     public DateTime? ClosedAt { get; set; }
-
 }

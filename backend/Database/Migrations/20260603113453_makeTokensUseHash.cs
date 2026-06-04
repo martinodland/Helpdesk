@@ -37,7 +37,7 @@ namespace Helpdesk.Database.Migrations
                 defaultValue: "");
 
             migrationBuilder.AddColumn<bool>(
-                name: "IsPrivate",
+                name: "OnlyAdmin",
                 table: "InternalNotes",
                 type: "INTEGER",
                 nullable: false,
@@ -73,7 +73,7 @@ namespace Helpdesk.Database.Migrations
                 table: "InternalNotes");
 
             migrationBuilder.DropColumn(
-                name: "IsPrivate",
+                name: "OnlyAdmin",
                 table: "InternalNotes");
 
             migrationBuilder.RenameColumn(

@@ -16,4 +16,11 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Ticket>()
+            .HasOne(searchedTicket => searchedTicket.CreatedByUser)
+            .WithMany()
+            .HasForeignKey(searchedTicket => searchedTicket.CreadtedByUserId);
+    }
 }

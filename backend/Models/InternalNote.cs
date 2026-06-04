@@ -8,11 +8,13 @@ public class InternalNote
 
     public Ticket? Ticket { get; set; }
 
+    public User? User { get; set; }
+
     public required int UserId { get; set; }
 
     public required string Description { get; set; }
 
-    public required bool IsPrivate { get; set; } = false;
+    public required bool OnlyAdmin { get; set; } = false;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

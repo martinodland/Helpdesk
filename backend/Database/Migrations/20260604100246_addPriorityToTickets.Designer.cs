@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Helpdesk.Database.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260603113453_makeTokensUseHash")]
-    partial class makeTokensUseHash
+    [Migration("20260604100246_addPriorityToTickets")]
+    partial class addPriorityToTickets
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

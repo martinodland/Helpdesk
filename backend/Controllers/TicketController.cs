@@ -5,8 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using HelpDesk.Filters;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
-using System.Formats.Asn1;
-using System.Reflection.Metadata.Ecma335;
+using HelpDesk.Dtos.Tickets.Response;
 
 namespace HelpDesk.Controllers;
 
@@ -53,6 +52,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
             Title = dto.Title,
             Description = dto.Text,
             Status = "Åpen",
+            Priority = dto.Priority,
             CreadtedByUserId = userId
         });
 
@@ -138,4 +138,49 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
         return Ok(new { message = "Ticket successfully deleted!" });
     }
+
+    // Get a specific ticket
+    [HttpGet("{id}")]
+    [Authorize]
+    [CsrfHeader]
+    public async Task<ActionResult> GetTicket(int id)
+    {
+        string userRole = User.FindFirstValue("role")!;
+
+        Ticket? ticket;
+
+        if(userRole != "Admin")
+        {
+            int userId = int.Parse(User.FindFirstValue("id")!);
+
+            ticket = await _dbContext.Tickets.Include(searchedTicket => searchedTicket.CreatedByUser).FirstOrDefaultAsync(searchedTicket => searchedTicket.Id == id && searchedTicket.CreadtedByUserId == userId);
+
+            if(ticket is null)
+            {
+                return NotFound(new { message = "Ticket does not exist." });
+            }
+
+            return Ok(new { message = "Ticket retrieved successfully!", ticket = MapToDto(ticket)});
+        }
+
+        ticket = await _dbContext.Tickets.Include(searchedTicket => searchedTicket.CreatedByUser).FirstOrDefaultAsync(searchedTicket => searchedTicket.Id == id);
+
+        if(ticket is null)
+        {
+            return NotFound(new { message = "Ticket does not exist." });
+        }
+
+        return Ok(new { message = "Ticket retrieved successfully!", ticket = MapToDto(ticket) }); 
+    }
+
+    private static ResponseTicketDto MapToDto(Ticket ticket) => new()
+    {
+        Id = ticket.Id,
+        Title = ticket.Title,
+        Description = ticket.Description,
+        Status = ticket.Status,
+        Priority = ticket.Priority,
+        CreatedByUser = ticket.CreatedByUser,
+        CreatedAt = ticket.CreatedAt
+    };
 }

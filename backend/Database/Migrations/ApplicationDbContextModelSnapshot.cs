@@ -29,7 +29,7 @@ namespace Helpdesk.Database.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsPrivate")
+                    b.Property<bool>("OnlyAdmin")
                         .HasColumnType("INTEGER");
 
                     b.Property<int>("TicketId")
