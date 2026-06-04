@@ -22,18 +22,10 @@ console.log("userStore: ", userStore)
 
 /**{{ userStore.user?.name }} {{ pageNameStore.pageName }} */
 
-/**
- * Function to open the mobile menu.
- */
-
-async function openMobileMenu() {
-    
-}
-
 </script>
 
 <template> 
-    <div v-if="showMenu == true" class="bg-(--secondary-theme-color) h-screen w-screen">
+    <div v-if="showMenu" class="bg-(--secondary-theme-color) h-screen w-screen z-40">
         <div class="flex flex-col px-2 py-3">
             <div class="flex items-center">
                 <XMarkIcon v-on:click="showMenu = false" class="ml-auto mt-3 size-7 text-white cursor-pointer" />
@@ -45,7 +37,7 @@ async function openMobileMenu() {
             </div>
         </div>
     </div>
-    <div class="flex flex-row justify-between px-2 py-3 md:py-3 md:px-4">
+    <div v-if="!showMenu" class="flex flex-row justify-between px-2 py-3 md:py-3 md:px-4">
         <div class="flex flex-col gap-1 w-1/2">
             <p class="font-bold text-md md:text-xl">{{ pageNameStore.pageName }}</p>
             <p class="text-sm md:text-md text-(--secondary-text-color)" v-if="pageNameStore.pageName == 'Oversikt'">Søndag 1. juni 2026</p>
