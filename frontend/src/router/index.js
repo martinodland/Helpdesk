@@ -100,13 +100,13 @@ export async function customFetch(url, method, body = null){
  */
 
 export function convertToReadable(dateString) {
-  if (!dateString) return 'Ukjent dato';
+  if (!dateString) return 'Aldri';
 
   const truncated = dateString.replace(/(\.\d{3})\d+/, '$1');
   const normalized = truncated.endsWith('Z') ? truncated : truncated + 'Z';
   const date = new Date(normalized);
 
-  if (isNaN(date.getTime())) return 'Ukjent dato';
+  if (isNaN(date.getTime())) return 'Aldri';
 
   return new Intl.DateTimeFormat('nb-NO', {
     year: 'numeric',

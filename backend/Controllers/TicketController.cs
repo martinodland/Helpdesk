@@ -80,42 +80,10 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
         if (userRole == "User" && userId != ticket.CreatedByUserId) return StatusCode(403, new { message = "You dont have access to this ticket!"} );
 
-        bool updated = false;
+        if (dto.Status is not null) ticket.Status = dto.Status;
+        if (dto.Priority is not null) ticket.Priority = dto.Priority;
 
-        if (dto.Status is not null)
-        {
-            ticket.Status = dto.Status;
-
-            updated = true;
-        }
-
-        if (dto.Priority is not null)
-        {
-            ticket.Priority = dto.Priority;
-
-            updated = true;
-        }
-
-        /**
-        if (dto.Title is not null)
-        {
-            ticket.Title = dto.Title;
-
-            updated = true;
-        }
-
-        if(dto.Description is not null)
-        {
-            ticket.Description = dto.Description;
-
-            updated = true;
-        }
-        */
-
-        if (updated)
-        {
-            ticket.UpdatedAt = DateTime.UtcNow;
-        }
+        ticket.UpdatedAt = (dto.Status is not null || dto.Priority is not null) ? DateTime.UtcNow : ticket.UpdatedAt;
 
         await _dbContext.SaveChangesAsync();
 
@@ -195,6 +163,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
         {
             Name = ticket.CreatedByUser!.Name
         },
-        CreatedAt = ticket.CreatedAt
+        CreatedAt = ticket.CreatedAt,
+        UpdatedAt = ticket.UpdatedAt
     };
 }
