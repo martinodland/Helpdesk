@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using HelpDesk.Dtos.Tickets.Response;
 using HelpDesk.Dtos.Tickets.Query;
+using HelpDesk.Dtos.Response;
 
 namespace HelpDesk.Controllers;
 
@@ -21,8 +22,6 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
     [CsrfHeader]
     public async Task<ActionResult> GetTickets([FromQuery] GetTicketsQueryDto dto)
     {
-        Console.WriteLine(dto.Status);
-
         int userId = int.Parse(User.FindFirstValue("id")!);
 
         string userRole = User.FindFirstValue("role")!;
@@ -31,12 +30,12 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
         if(userRole == "User")
         {
-            tickets = await _dbContext.Tickets.Where(searchedTicket => searchedTicket.CreatedByUserId == userId).ToListAsync();
+            tickets = await _dbContext.Tickets.Where(searchedTicket => searchedTicket.CreatedByUserId == userId && (string.IsNullOrWhiteSpace(dto.Status) || searchedTicket.Status == dto.Status)).ToListAsync();
 
             return Ok ( new { message = "Found user tickets successfully!", tickets = tickets});
         }
 
-        tickets = await _dbContext.Tickets.ToListAsync();
+        tickets = await _dbContext.Tickets.Where(searchedTicket => string.IsNullOrWhiteSpace(dto.Status) || searchedTicket.Status == dto.Status).ToListAsync();
 
         return Ok( new { message = "Found all tickets successfully!", tickets = tickets });
     }
@@ -54,7 +53,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
         {
             Title = dto.Title,
             Description = dto.Text,
-            Status = "Åpen",
+            Status = "Open",
             Priority = dto.Priority,
             CreatedByUserId = userId
         });
@@ -71,7 +70,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
     [CsrfHeader]
     public async Task<ActionResult> UpdateTicket(int id, UpdateTicketDto dto)
     {
-        Ticket? ticket = await _dbContext.Tickets.FirstOrDefaultAsync(searchedTicket => searchedTicket.Id == id);
+        Ticket? ticket = await _dbContext.Tickets.Include(searchedTicket => searchedTicket.CreatedByUser).FirstOrDefaultAsync(searchedTicket => searchedTicket.Id == id);
 
         if ( ticket is null ) return NotFound(new { message = "Ticket does not exist "});
 
@@ -90,6 +89,14 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
             updated = true;
         }
 
+        if (dto.Priority is not null)
+        {
+            ticket.Priority = dto.Priority;
+
+            updated = true;
+        }
+
+        /**
         if (dto.Title is not null)
         {
             ticket.Title = dto.Title;
@@ -103,6 +110,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
             updated = true;
         }
+        */
 
         if (updated)
         {
@@ -111,7 +119,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
         await _dbContext.SaveChangesAsync();
 
-        return Ok(new { message = "Ticket was updated successfully "});
+        return Ok(new { message = "Ticket was updated successfully ", ticket = MapToDto(ticket) });
     }
 
     // Delete ticket.
@@ -183,7 +191,10 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
         Description = ticket.Description,
         Status = ticket.Status,
         Priority = ticket.Priority,
-        CreatedByUser = ticket.CreatedByUser,
+        CreatedByUser = new ResponseUserDto
+        {
+            Name = ticket.CreatedByUser!.Name
+        },
         CreatedAt = ticket.CreatedAt
     };
 }
