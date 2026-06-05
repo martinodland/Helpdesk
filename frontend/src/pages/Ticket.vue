@@ -173,8 +173,9 @@ onMounted(() => {
                             </div>
                             <div class="flex flex-col">
                                 <div class="flex flex-row items-center gap-3">
-                                    <p class="font-bold">Martin Odland</p>
+                                    <p class="font-bold">{{ note.writtenByUser}}</p>
                                     <p class="text-sm text-(--secondary-text-color)">{{ convertToReadable(note.createdAt) }}</p>
+                                    <p class="text-sm text-(--secondary-text-color)" v-if="note.onlyAdmin">Admin</p>
                                 </div>
                                 <p class="text-sm">{{ note.description }}</p>
                             </div>
@@ -191,7 +192,7 @@ onMounted(() => {
                             class="w-full border-2 border-(--secondary-background-border) rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-blue-400"
                         ></textarea>
                         <div class="flex flex-row gap-4 justify-end">
-                            <div v-if="userStore.user.role" class="flex flex-row gap-2 items-center">
+                            <div v-if="userStore.user.role === 'Admin'" class="flex flex-row gap-2 items-center">
                                 <p class="text-(--secondary-text-color) font-medium">Bare for admins</p>
                                 <input type="checkbox" v-model="form.onlyAdmin">
                             </div>

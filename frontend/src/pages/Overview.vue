@@ -70,8 +70,9 @@ onMounted(() => {
       </div>
       <div class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex-1 min-h-0 flex flex-col">
         <div class="flex flex-row justify-between pb-6">
-          <p class="font-bold">Mine nyeste saker</p>
-          <RouterLink class="text-(--main-theme-color) font-medium" to="/tickets">Se alle (0)</RouterLink>
+          <p class="font-bold" v-if="userStore.user?.role !== 'Admin'">Mine nyeste saker</p>
+          <p class="font-bold" v-else>Nyeste saker</p>
+          <RouterLink class="text-(--main-theme-color) font-medium" to="/tickets">Se alle {{ tickets.length }}</RouterLink>
         </div>
         <div class="overflow-y-auto flex-1 min-h-0">
           <div v-for="ticket in tickets">

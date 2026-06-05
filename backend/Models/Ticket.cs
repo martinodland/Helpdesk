@@ -12,7 +12,7 @@ public class Ticket
 
     public required string Priority { get; set; }
 
-    public required int CreadtedByUserId { get; set; }
+    public required int CreatedByUserId { get; set; }
 
     public User? CreatedByUser { get; set; }
 

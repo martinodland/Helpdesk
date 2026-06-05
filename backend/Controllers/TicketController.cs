@@ -6,6 +6,7 @@ using HelpDesk.Filters;
 using System.Security.Claims;
 using Microsoft.EntityFrameworkCore;
 using HelpDesk.Dtos.Tickets.Response;
+using HelpDesk.Dtos.Tickets.Query;
 
 namespace HelpDesk.Controllers;
 
@@ -18,8 +19,10 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
     [HttpGet]
     [Authorize]
     [CsrfHeader]
-    public async Task<ActionResult> GetTickets()
+    public async Task<ActionResult> GetTickets([FromQuery] GetTicketsQueryDto dto)
     {
+        Console.WriteLine(dto.Status);
+
         int userId = int.Parse(User.FindFirstValue("id")!);
 
         string userRole = User.FindFirstValue("role")!;
@@ -28,7 +31,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
         if(userRole == "User")
         {
-            tickets = await _dbContext.Tickets.Where(searchedTicket => searchedTicket.CreadtedByUserId == userId).ToListAsync();
+            tickets = await _dbContext.Tickets.Where(searchedTicket => searchedTicket.CreatedByUserId == userId).ToListAsync();
 
             return Ok ( new { message = "Found user tickets successfully!", tickets = tickets});
         }
@@ -53,7 +56,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
             Description = dto.Text,
             Status = "Åpen",
             Priority = dto.Priority,
-            CreadtedByUserId = userId
+            CreatedByUserId = userId
         });
 
         await _dbContext.SaveChangesAsync();
@@ -76,7 +79,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
         string userRole = User.FindFirstValue("role")!;
 
-        if (userRole == "User" && userId != ticket.CreadtedByUserId) return StatusCode(403, new { message = "You dont have access to this ticket!"} );
+        if (userRole == "User" && userId != ticket.CreatedByUserId) return StatusCode(403, new { message = "You dont have access to this ticket!"} );
 
         bool updated = false;
 
@@ -153,7 +156,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
         {
             int userId = int.Parse(User.FindFirstValue("id")!);
 
-            ticket = await _dbContext.Tickets.Include(searchedTicket => searchedTicket.CreatedByUser).FirstOrDefaultAsync(searchedTicket => searchedTicket.Id == id && searchedTicket.CreadtedByUserId == userId);
+            ticket = await _dbContext.Tickets.Include(searchedTicket => searchedTicket.CreatedByUser).FirstOrDefaultAsync(searchedTicket => searchedTicket.Id == id && searchedTicket.CreatedByUserId == userId);
 
             if(ticket is null)
             {
