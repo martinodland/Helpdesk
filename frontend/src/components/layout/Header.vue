@@ -1,5 +1,6 @@
 <script setup>
 
+import { convertToReadable } from '@/router';
 import { usePageNameStore } from '@/stores/usePageNameStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { ChevronDownIcon, BellIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/vue/24/solid';
@@ -18,9 +19,9 @@ const showMenu = ref(false);
 const userStore = useUserStore();
 const pageNameStore = usePageNameStore();
 
-console.log("userStore: ", userStore)
-
 /**{{ userStore.user?.name }} {{ pageNameStore.pageName }} */
+
+// Object.keys(monthsNo).find(key => key.includes(new Date().))
 
 </script>
 
@@ -40,7 +41,8 @@ console.log("userStore: ", userStore)
     <div v-if="!showMenu" class="flex flex-row justify-between px-2 py-3 md:py-3 md:px-4">
         <div class="flex flex-col gap-1 w-1/2">
             <p class="font-bold text-md md:text-xl">{{ pageNameStore.pageName }}</p>
-            <p class="text-sm md:text-md text-(--secondary-text-color)" v-if="pageNameStore.pageName == 'Oversikt'">Søndag 1. juni 2026</p>
+            
+            <p class="text-sm md:text-md text-(--secondary-text-color)" v-if="pageNameStore.pageName == 'Oversikt'">{{ new Date().toLocaleDateString('nb-NO') + " " + new Date().toLocaleTimeString('nb-NO').slice(0, -3) }}</p>
         </div>
         <div class="hidden md:flex flex-row w-1/2 gap-7 justify-end">
             <div class="flex items-center">
@@ -52,7 +54,7 @@ console.log("userStore: ", userStore)
                 </div>
                 <div class="flex flex-col">
                     <p class="font-bold">{{ userStore.user?.name }}</p>
-                    <p class="text-(--secondary-text-color) text-sm">Bruker</p>
+                    <p class="text-(--secondary-text-color) text-sm">{{ userStore.user?.role }}</p>
                 </div>
             </div>
             <div class="flex items-center">

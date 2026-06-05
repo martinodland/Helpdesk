@@ -1,4 +1,5 @@
 <script setup>
+import { convertToReadable } from '@/router';
 import { computed } from 'vue';
 
 /**
@@ -24,7 +25,7 @@ const props = defineProps({
     },
     ticketUpdated: {
         type: String,
-        default: "Oppdatert 30.05.2026"
+        default: null
     },
     ticketPriority: {
         type: String,
@@ -37,9 +38,19 @@ const props = defineProps({
  */
 
 const priorityColors = {
-    Høy: "#bd5e0f",
+    High: "#bd5e0f",
     Normal: "#2f5fd0",
-    Lav: "#5b6678"
+    Low: "#5b6678"
+}
+
+/**
+ * Translation.
+ */
+
+const priorityLabels = {
+    High: 'Høy',
+    Normal: 'Normal',
+    Low: 'Lav',
 }
 
 /**
@@ -47,10 +58,22 @@ const priorityColors = {
  */
 
 const statusColors = {
-    Åpen: "#2f5fd0",
-    Påbegynt: "#a86a0b",
-    Fullført: "#207a4d"
+    Open: "#2f5fd0",
+    InProgress: "#a86a0b",
+    Closed: "#207a4d"
 }
+
+/**
+ * Translation.
+ */
+
+const statusLabels = {
+    Open: 'Åpen',
+    InProgress: 'Påbegynt',
+    Closed: 'Fullført',
+}
+
+
 
 /**
  * Get the colors that should be active.
@@ -70,15 +93,15 @@ const activeStatusColor = computed(() => statusColors[props.ticketStatus]);
                     <div class="flex flex-row gap-2">
                         <p class="text-(--secondary-text-color)">SAK - {{ props.ticketId }}</p>
                         <div :style="{ backgroundColor: activePriorityColor + '80' }" class="rounded-xl px-3">
-                            <p :style="{ color: activePriorityColor }" class="font-bold">{{ props.ticketPriority }}</p>
+                            <p :style="{ color: activePriorityColor }" class="font-bold">{{ priorityLabels[props.ticketPriority] ?? props.ticketPriority }}</p>
                         </div>
                     </div>
                     <p class="font-bold text-md lg:text-lg">{{ props.ticketTitle }}</p>
-                    <p class="text-sm text-(--secondary-text-color)">Programvare - {{ props.ticketCreated }} - {{ props.ticketUpdated }}</p>
+                    <p class="text-sm text-(--secondary-text-color)">Programvare - {{ props.ticketCreated }} - {{ props.ticketUpdated ? convertToReadable(props.ticketUpdated) : 'Ikke oppdatert' }}</p>
                 </div>
                 <div class="flex flex-col my-auto">
                     <div :style="{ backgroundColor: activeStatusColor + '80' }" class="rounded-xl px-3">
-                        <p :style="{ color: activeStatusColor }" class="font-bold text-center">{{ props.ticketStatus }}</p>
+                        <p :style="{ color: activeStatusColor }" class="font-bold text-center">{{ statusLabels[props.ticketStatus] ?? props.ticketStatus }}</p>
                     </div>
                 </div>
             </div>

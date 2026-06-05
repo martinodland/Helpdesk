@@ -1,4 +1,4 @@
-using HelpDesk.Models;
+using HelpDesk.Dtos.Response;
 
 namespace HelpDesk.Dtos.Tickets.Response;
 
@@ -14,7 +14,7 @@ public class ResponseTicketDto
 
     public required string Priority { get; set; }
 
-    public User? CreatedByUser { get; set; }
+    public ResponseUserDto? CreatedByUser { get; set; }
 
     public required DateTime CreatedAt { get; set; }
 

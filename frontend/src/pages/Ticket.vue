@@ -1,9 +1,10 @@
 <script setup>
+import SelectInput from '@/components/form/SelectInput.vue';
 import DashboardLayout from '@/layout/DashboardLayout.vue';
 import { convertToReadable, customFetch, previousRouteName } from '@/router';
 import { useUserStore } from '@/stores/useUserStore';
 import { UserIcon } from '@heroicons/vue/24/solid';
-import { onMounted, reactive, ref } from 'vue';
+import { computed, onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
 let response;
@@ -14,6 +15,8 @@ let response;
 
 const ticket = ref([]);
 const notes = ref({});
+let newTicketStatus = ref('');
+let newTicketPriority = ref('');
 
 /**
  * Store.
@@ -23,6 +26,9 @@ const userStore = useUserStore();
 
 /**
  * Form.
+ * 
+ * Creates the ticket. Update ticket function does not use form due to it being easier to do it manually with the custom component.
+ * 
  */
 
 const form = reactive({
@@ -67,10 +73,7 @@ async function getNotesOnTicket(){
 
 async function postNoteOnTicket(){
     try {
-        response = await customFetch(
-            `tickets/${route.params.id}/notes`,
-            'POST',
-            JSON.stringify({ description: form.comment, onlyAdmin: form.onlyAdmin })
+        response = await customFetch(`tickets/${route.params.id}/notes`, 'POST', JSON.stringify({ description: form.comment, onlyAdmin: form.onlyAdmin})
         )
 
         if(!response.ok){
@@ -105,10 +108,90 @@ async function retrieveTicket(){
 
     console.log("Ticket: ", ticket.value)
 
+    newTicketStatus.value = ticket.value.status;
+    newTicketPriority.value = ticket.value.priority;
+
+    console.log(newTicketStatus.value)
+    console.log(newTicketPriority.value)
+
   }catch(error){
     console.log("Failed retrieving ticket: ", error);
   }
 }
+
+/**
+ * Function that updates the ticket.
+ */
+
+async function updateTicket(){
+  try{
+    response = await customFetch(`tickets/${route.params.id}`, 'PATCH', JSON.stringify({ status: newTicketStatus.value, priority: newTicketPriority.value}));
+
+    if(!response.ok){
+      console.log("Failed updating ticket: ", response);
+    }
+
+    const data = await response.json();
+
+    ticket.value = data.ticket;
+
+    newTicketStatus.value = ticket.value.status;
+    newTicketPriority.value = ticket.value.priority;
+
+    console.log("Ticket: ", ticket.value)
+
+  }catch(error){
+    console.log("Failed updating ticket: ", error);
+  }
+}
+
+/**
+ * Color for priority.
+ */
+
+const priorityColors = {
+    High: "#bd5e0f",
+    Normal: "#2f5fd0",
+    Low: "#5b6678"
+}
+
+/**
+ * Translation.
+ */
+
+const priorityLabels = {
+    High: 'Høy',
+    Normal: 'Normal',
+    Low: 'Lav',
+}
+
+/**
+ * Color for status.
+ */
+
+const statusColors = {
+    Open: "#2f5fd0",
+    InProgress: "#a86a0b",
+    Closed: "#207a4d"
+}
+
+/**
+ * Translation.
+ */
+
+const statusLabels = {
+    Open: 'Åpen',
+    InProgress: 'Påbegynt',
+    Closed: 'Fullført',
+}
+
+/**
+ * Get the colors that sohuld be active.
+ */
+
+const activePriorityColor = computed(() => priorityColors[ticket.value.priority]);
+
+const activeStatusColor = computed(() => statusColors[ticket.value.status]);
 
 /**
  * Run on load.
@@ -130,22 +213,19 @@ onMounted(() => {
                     <div>
                         <p class="text-sm text-(--secondary-text-color)">SAK - {{ ticket.id }}</p>
                     </div>
-                    <div class="flex flex-row gap-4 text-sm">
-                        <div>
-                            <p>{{ ticket.status }}</p>
+                    <div class="flex flex-row gap-4 text-sm font-bold">
+                        <div :style="{ backgroundColor: activeStatusColor + '80' }" class="rounded-xl px-4 py-1">
+                            <p :style="{ color: activeStatusColor }">{{ statusLabels[ticket.status] ?? ticket.status }}</p>
                         </div>
-                        <div>
-                            <p>{{ ticket.priority }}</p>
+                        <div :style="{ backgroundColor: activePriorityColor + '80' }" class="rounded-xl px-4 py-1">
+                            <p :style="{ color: activePriorityColor }">{{ priorityLabels[ticket.priority] ?? ticket.priority }}</p>
                         </div>
                     </div>
                 </div>
                 <p class="font-bold text-xl">{{ ticket.title }}</p>
+                <p class="flex lg:hidden text-sm">{{ ticket.description}}</p>
                 <div class="border-b-2 border-(--secondary-background-border)"></div>
                 <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
-                    <div class="flex flex-col">
-                        <p class="text-sm text-(--secondary-text-color) font-medium">KATEGORI</p>
-                        <p class="font-bold text-sm">Programvare</p>
-                    </div>
                     <div class="flex flex-col">
                         <p class="text-sm text-(--secondary-text-color) font-medium">OPPRETTET AV</p>
                         <p class="font-bold text-sm">{{ ticket.createdByUser?.name }}</p>
@@ -154,18 +234,33 @@ onMounted(() => {
                         <p class="text-sm text-(--secondary-text-color) font-medium">OPPRETTET</p>
                         <p class="font-bold text-sm">{{ convertToReadable(ticket.createdAt) }}</p>
                     </div>
+                    <div class="flex flex-col">
+                        <p class="text-sm text-(--secondary-text-color) font-medium">SIST OPPDATERT</p>
+                        <p class="font-bold text-sm">{{ convertToReadable(ticket.updatedAt)}}</p>
+                    </div>
                 </div>
             </div>
-            <div class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex flex-col gap-3">
-                <p class="font-bold">Beskrivelse</p>
-                <div class="border-b-2 border-(--secondary-background-border)"></div>
-                <p class="text-sm">{{ ticket.description }}</p>
+            <div class="flex flex-col lg:flex-row gap-4">
+                <div class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 hidden lg:flex flex-col gap-3 lg:w-1/2">
+                    <p class="font-bold">Beskrivelse</p>
+                    <div class="border-b-2 border-(--secondary-background-border)"></div>
+                    <p class="text-sm">{{ ticket.description }}</p>
+                </div>
+                <div class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex flex-col gap-3 lg:w-1/2">
+                    <p class="font-bold">Oppdater ticket</p>
+                    <div class="border-b-2 border-(--secondary-background-border)"></div>
+                    <form class="flex flex-col gap-3" @submit.prevent="updateTicket()">
+                        <SelectInput v-model:lastClicked="newTicketStatus" :required="false" label="Ticket status" :values="{InProgress: 'Påbegynt', Closed: 'Ferdig'}" />
+                        <SelectInput v-model:lastClicked="newTicketPriority" :required="false" label="Ticket prioritet" :values="{Low: 'Lav', Normal: 'Normal', High: 'Høy'}"/>
+                        <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg cursor-pointer">Oppdater ticket</button>
+                    </form>
+                </div>
             </div>
 
-            <div class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex flex-col gap-3">
+            <div class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex-1 flex flex-col gap-3 min-h-0">
                 <p class="font-bold">Kommentarer</p>
                 <div class="border-b-2 border-(--secondary-background-border)"></div>
-                <div class="flex flex-col gap-2">
+                <div class="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">
                     <div v-for="note in notes">
                         <div class="flex flex-row gap-3">
                             <div class="my-auto">
@@ -182,7 +277,7 @@ onMounted(() => {
                         </div>
                     </div>
                 </div>
-                <div class="border-b-2 border-(--secondary-background-border)"></div>
+                <div class="border-b-2 border-(--secondary-background-border) mt-auto"></div>
                 <div class="flex flex-col gap-2">
                     <form @submit.prevent="postNoteOnTicket">
                         <textarea
@@ -196,9 +291,7 @@ onMounted(() => {
                                 <p class="text-(--secondary-text-color) font-medium">Bare for admins</p>
                                 <input type="checkbox" v-model="form.onlyAdmin">
                             </div>
-                            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg cursor-pointer">
-                                Send kommentar
-                            </button>
+                            <button class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium px-4 py-2 rounded-lg cursor-pointer">Send kommentar</button>
                         </div>
                     </form>
                 </div>

@@ -43,3 +43,8 @@ backend/obj/
 
 # Appsettings
 backend/appsettings.json
+
+# db
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal

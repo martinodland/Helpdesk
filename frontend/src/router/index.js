@@ -94,20 +94,27 @@ export async function customFetch(url, method, body = null){
 }
 
 /**
- * Make time easily human readable.
+ * Make time easily human readable. Z for local timezone.
  * 
  * @param {string} dateString The database time value.
  */
 
 export function convertToReadable(dateString) {
   if (!dateString) return 'Ukjent dato';
+
+  const truncated = dateString.replace(/(\.\d{3})\d+/, '$1');
+  const normalized = truncated.endsWith('Z') ? truncated : truncated + 'Z';
+  const date = new Date(normalized);
+
+  if (isNaN(date.getTime())) return 'Ukjent dato';
+
   return new Intl.DateTimeFormat('nb-NO', {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-  }).format(new Date(dateString));
+  }).format(date);
 }
 
 router.beforeEach((_to, from) => {
