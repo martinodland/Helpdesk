@@ -35,7 +35,6 @@ public class CookieService(ApplicationDbContext _dbContext, IHttpContextAccessor
             {
                 TokenHash = _refreshToken.HashRefreshToken(refreshToken),
                 UserId = user.Id,
-                User = user,
                 Expires = DateTime.UtcNow.AddDays(7)
             });
             

@@ -80,7 +80,7 @@ async function filterTickets(status = undefined){
 </script>
 
 <template>
-  <div class="grid grid-cols-2 lg:grid-cols-4 w-full bg-(--main-background) p-1 rounded-lg gap-1 mb-6 font-bold w-fit">
+  <div class="grid grid-cols-1 lg:grid-cols-4 w-full bg-(--main-background) p-1 rounded-lg gap-1 mb-6 font-bold w-fit">
     <button v-on:click="router.push({ query: { status: undefined } }); filterTickets()" class="flex flex-row gap-2 bg-white px-4 py-2 rounded-lg items-center cursor-pointer">
       <p :class="route.query.status === undefined ? 'text-(--main-theme-color)' : ''">Alle</p>
       <div>

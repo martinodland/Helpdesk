@@ -7,8 +7,6 @@ import { PencilIcon, UserIcon, XCircleIcon, CheckCircleIcon } from '@heroicons/v
 import { onMounted, reactive, ref } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 
-let response;
-
 /**
  * Refs.
  */
@@ -65,7 +63,7 @@ const router = useRouter();
 
 async function getNotesOnTicket(){
     try {
-        response = await customFetch(`tickets/${route.params.id}/notes`, 'GET');
+        const response = await customFetch(`tickets/${route.params.id}/notes`, 'GET');
 
         if(!response.ok){
             console.log("Failed retrieving notes on ticket: ", response);
@@ -85,7 +83,7 @@ async function getNotesOnTicket(){
 
 async function postNoteOnTicket(){
     try {
-        response = await customFetch(`tickets/${route.params.id}/notes`, 'POST', JSON.stringify(noteForm));
+        const response = await customFetch(`tickets/${route.params.id}/notes`, 'POST', JSON.stringify(noteForm));
 
         if(!response.ok){
             console.log("Failed posting note on ticket: ", response);
@@ -107,7 +105,7 @@ async function postNoteOnTicket(){
 
 async function retrieveTicket(){
   try{
-    response = await customFetch(`tickets/${route.params.id}`, 'GET');
+    const response = await customFetch(`tickets/${route.params.id}`, 'GET');
 
     if(!response.ok){
       console.log("Failed retrieving ticket: ", response);
@@ -135,7 +133,7 @@ async function updateTicket(){
   try{
     console.log("udpatingticket!");
 
-    response = await customFetch(`tickets/${route.params.id}`, 'PATCH', JSON.stringify(ticketForm));
+    const response = await customFetch(`tickets/${route.params.id}`, 'PATCH', JSON.stringify(ticketForm));
 
     if(!response.ok){
       console.log("Failed updating ticket: ", response);
@@ -165,6 +163,8 @@ async function updateTicket(){
 
 async function updateNoteOnTicket(noteId) {
     try{
+        let response;
+
         if(editNoteForm.description == ""){
             response = await customFetch(`tickets/${route.params.id}/notes/${noteId}`, 'DELETE', JSON.stringify(editNoteForm));
         }else{
@@ -190,7 +190,7 @@ async function updateNoteOnTicket(noteId) {
 
 async function deleteTicket() {
     try{
-        response = await customFetch(`tickets/${route.params.id}`, 'DELETE');
+        const response = await customFetch(`tickets/${route.params.id}`, 'DELETE');
 
         if(!response.ok){
             console.log("Could not delete ticket: ", ticket)
@@ -383,7 +383,7 @@ onMounted(() => {
                             class="w-full border-2 border-(--secondary-background-border) rounded-lg p-3 text-sm resize-none focus:outline-none focus:border-blue-400"
                         ></textarea>
                         <div class="flex flex-row gap-4 justify-end">
-                            <div v-if="userStore.user.role === 'Admin'" class="flex flex-row gap-2 items-center">
+                            <div v-if="userStore.user?.role === 'Admin'" class="flex flex-row gap-2 items-center">
                                 <label class="text-(--secondary-text-color) font-medium flex flex-row gap-2">Bare for admins
                                     <input type="checkbox" v-model="noteForm.onlyAdmin">
                                 </label>

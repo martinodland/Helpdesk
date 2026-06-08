@@ -57,6 +57,8 @@ const router = createRouter({
  * @param {object} body Data that you want to send.
  */
 
+let activeRefresh = null;
+
 export async function customFetch(url, method, body = null){
   let response = await fetch(`http://localhost:5034/${url}`, {
     method: method,
@@ -65,24 +67,27 @@ export async function customFetch(url, method, body = null){
       "Content-Type": "application/json",
       "X-CSRF": "1",
     },
-    body: body 
+    body: body
   });
 
   if(response.status !== 401 || url === "auth/refresh" || url === "auth/login"){
     return response;
   }
 
-  const refreshResponse = await fetch("http://localhost:5034/auth/refresh", {
-    method: "POST",
-    credentials: 'include',
-    headers: {
-      "X-CSRF": "1",
-    },
-  });
+  if(!activeRefresh){
+    activeRefresh = fetch("http://localhost:5034/auth/refresh", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "X-CSRF": "1",
+      },
+    }).finally(() => activeRefresh = null);
+  }
+
+  const refreshResponse = await activeRefresh;
 
   if(!refreshResponse.ok){
     router.push({ name: 'Login'});
-
     return refreshResponse;
   }
 

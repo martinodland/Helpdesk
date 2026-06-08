@@ -61,6 +61,7 @@ async function logout() {
                 <RouterLink v-on:click="showMenu = false" class="cursor-pointer" to="/overview">Oversikt</RouterLink>
                 <RouterLink v-on:click="showMenu = false" class="cursor-pointer" to="/tickets">Mine saker</RouterLink>
                 <RouterLink v-on:click="showMenu = false" class="cursor-pointer" to="/create">Ny sak</RouterLink>
+                <RouterLink v-on:click="showMenu = false" class="cursor-pointer" to="/settings">Instillinger</RouterLink>
                 <form  @submit.prevent="logout()">
                     <button class="mr-auto">Logg ut</button>
                 </form>

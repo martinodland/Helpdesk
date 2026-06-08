@@ -97,7 +97,7 @@ const activeStatusColor = computed(() => statusColors[props.ticketStatus]);
                         </div>
                     </div>
                     <p class="font-bold text-md lg:text-lg">{{ props.ticketTitle }}</p>
-                    <p class="text-sm text-(--secondary-text-color)">Programvare - {{ props.ticketCreated }} - {{ props.ticketUpdated ? convertToReadable(props.ticketUpdated) : 'Ikke oppdatert' }}</p>
+                    <p class="text-sm text-(--secondary-text-color)">{{ props.ticketCreated }} - {{ props.ticketUpdated ? convertToReadable(props.ticketUpdated) : 'Ikke oppdatert' }}</p>
                 </div>
                 <div class="flex flex-col my-auto">
                     <div :style="{ backgroundColor: activeStatusColor + '80' }" class="rounded-xl px-3">

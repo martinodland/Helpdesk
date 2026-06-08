@@ -74,17 +74,26 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
         if ( ticket is null ) return NotFound(new { message = "Ticket does not exist "});
 
+        string userRole = User.FindFirstValue("role")!;
+
         int userId = int.Parse(User.FindFirstValue("id")!);
 
-        if (userId != ticket.CreatedByUserId) return StatusCode(403, new { message = "You dont have access to this ticket!"} );
-
-        if (dto.Status is not null) ticket.Status = dto.Status;
+        if( userRole == "User" && ticket.CreatedByUserId == userId)
+        {
+            if (userId != ticket.CreatedByUserId) return StatusCode(403, new { message = "You dont have access to this ticket!"} );
         
-        if (dto.Priority is not null) ticket.Priority = dto.Priority;
+            if (dto.Description is not null) ticket.Description = dto.Description;
 
-        if (dto.Description is not null) ticket.Description = dto.Description;
+            if (dto.Title is not null) ticket.Title = dto.Title;
 
-        if (dto.Title is not null) ticket.Title = dto.Title;
+            if (dto.Status is not null) ticket.Status = dto.Status;
+        }
+        else
+        {            
+            if (dto.Status is not null) ticket.Status = dto.Status;
+
+            if (dto.Priority is not null) ticket.Priority = dto.Priority;
+        }
 
         ticket.UpdatedAt = (dto.Status is not null || dto.Priority is not null || dto.Description is not null || dto.Title is not null)  ? DateTime.UtcNow : ticket.UpdatedAt;
 

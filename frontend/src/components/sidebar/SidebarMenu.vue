@@ -1,7 +1,7 @@
 <script setup>
 
 import { PlusIcon, ListBulletIcon,RectangleGroupIcon, Cog6ToothIcon } from '@heroicons/vue/24/outline';
-import { computed } from 'vue';
+import { computed, ref } from 'vue';
 import { useRoute } from 'vue-router';
 
 /**
@@ -41,10 +41,10 @@ const icons = {
 }
 
 /**
- * Get the icon that should be active.
+ * Refs.
  */
 
-const selectedIcon = computed(() => icons[props.icon]);
+const selectedIcon = ref(icons[props.icon]);
 
 /**
  * Set the active path.
