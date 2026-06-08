@@ -47,17 +47,15 @@ async function logout() {
     }
 }
 
-/**{{ userStore.user?.name }} {{ pageNameStore.pageName }} */
-
-// Object.keys(monthsNo).find(key => key.includes(new Date().))
-
 </script>
 
 <template> 
     <div v-if="showMenu" class="bg-(--secondary-theme-color) h-screen w-screen z-40">
         <div class="flex flex-col px-2 py-3">
             <div class="flex items-center">
-                <XMarkIcon v-on:click="showMenu = false" class="ml-auto mt-3 size-7 text-white cursor-pointer" />
+                <button aria-label="Lukk mobilmeny" class="ml-auto">
+                    <XMarkIcon v-on:click="showMenu = false" class="mt-3 size-7 text-white cursor-pointer" />
+                </button>
             </div>
             <div class="flex flex-col gap-4 text-white font-bold">
                 <RouterLink v-on:click="showMenu = false" class="cursor-pointer" to="/overview">Oversikt</RouterLink>
@@ -86,7 +84,7 @@ async function logout() {
                 </div>
             </div>
             <div class="relative my-auto">
-                <button class="transition duration-200" :class="openLogout === false ? 'rotate-180' : ''" type="button" @click="openLogout = !openLogout">
+                <button aria-label="Åpne boks" class="transition duration-200" :class="openLogout === false ? 'rotate-180' : ''" type="button" @click="openLogout = !openLogout">
                     <ChevronDownIcon class="size-4 text-(--secondary-text-color) cursor-pointer" />
                 </button>
                 <div v-if="openLogout" class="absolute right-0 top-[46px] mt-1 bg-white border border-t-0 rounded-tr-none rounded-tl-none border-gray-200 rounded-lg shadow-lg p-2 w-32">
@@ -97,7 +95,9 @@ async function logout() {
             </div>
         </div>
         <div class="flex items-center md:hidden">
-            <Bars3Icon v-on:click="showMenu = true" class="size-7 cursor-pointer" />
+            <button aria-label="Åpne mobilmeny">
+                <Bars3Icon v-on:click="showMenu = true" class="size-7 cursor-pointer" />
+            </button>
         </div>
     </div>
 </template>

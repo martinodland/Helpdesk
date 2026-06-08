@@ -1,7 +1,7 @@
 <script setup>
 import { useUserStore } from '@/stores/useUserStore.js';
 import DashboardLayout from '../layout/DashboardLayout.vue';
-import { PlusIcon } from '@heroicons/vue/24/solid';
+import { PlusIcon, UsersIcon } from '@heroicons/vue/24/solid';
 import TicketStatusOverviewCard from '@/components/cards/TicketStatusOverviewCard.vue';
 import SingleTicketCard from '@/components/cards/SingleTicketCard.vue';
 import { onMounted, ref } from 'vue';
@@ -108,7 +108,7 @@ onMounted(() => {
         <TicketStatusOverviewCard :amountOfTickets="countOccurencesInArray(tickets, 'InProgress')" icon="EnvelopeOpenIcon" label="Påbegynte saker"/>
         <TicketStatusOverviewCard :amountOfTickets="countOccurencesInArray(tickets, 'Closed')" icon="CheckCircleIcon" label="Fullførte saker" />
       </div>
-      <div v-if="settings?.showMyTickets == 'true' || settings?.showNewestTickets == 'true'" class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex-1 flex flex-col">
+      <div v-if="settings?.showMyTickets == 'true' && userStore.user?.role == 'User' || settings?.showNewestTickets == 'true' && userStore.user?.role == 'Admin'" class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex-1 flex flex-col">
         <div class="flex flex-row justify-between pb-6">
           <p class="font-bold" v-if="userStore.user?.role !== 'Admin'">Mine nyeste saker</p>
           <p class="font-bold" v-else>Nyeste saker</p>

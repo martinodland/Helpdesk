@@ -78,7 +78,7 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
         string userRole = User.FindFirstValue("role")!;
 
-        if (userRole == "User" && userId != ticket.CreatedByUserId) return StatusCode(403, new { message = "You dont have access to this ticket!"} );
+        if (userId != ticket.CreatedByUserId) return StatusCode(403, new { message = "You dont have access to this ticket!"} );
 
         if (dto.Status is not null) ticket.Status = dto.Status;
         
@@ -166,7 +166,8 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
         Priority = ticket.Priority,
         CreatedByUser = new ResponseUserDto
         {
-            Name = ticket.CreatedByUser!.Name
+            Name = ticket.CreatedByUser!.Name,
+            Id = ticket.CreatedByUser.Id,
         },
         CreatedAt = ticket.CreatedAt,
         UpdatedAt = ticket.UpdatedAt
