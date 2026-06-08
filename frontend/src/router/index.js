@@ -107,17 +107,21 @@ export async function customFetch(url, method, body = null){
 /**
  * Make time easily human readable. Z for local timezone.
  * 
+ * keeps 3 decimals, adds Z to end for local time.
+ * 
  * @param {string} dateString The database time value.
  */
 
 export function convertToReadable(dateString) {
-  if (!dateString) return 'Aldri';
+  if (!dateString) return 'Aldri oppdatert';
 
   const truncated = dateString.replace(/(\.\d{3})\d+/, '$1');
+
   const normalized = truncated.endsWith('Z') ? truncated : truncated + 'Z';
+
   const date = new Date(normalized);
 
-  if (isNaN(date.getTime())) return 'Aldri';
+  if (isNaN(date.getTime())) return 'Aldri oppdatert';
 
   return new Intl.DateTimeFormat('nb-NO', {
     year: 'numeric',

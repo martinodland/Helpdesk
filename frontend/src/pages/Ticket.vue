@@ -257,7 +257,7 @@ onMounted(() => {
     <DashboardLayout>
         <div class="bg-(--main-background) h-fit min-h-full p-6 flex flex-col gap-2">
             <div class="flex flex-row justify-between">
-                <button v-on:click="previousRouteName && previousRouteName != 'Ticket' ? router.back() : router.push({ name: 'Tickets' })" class="text-(--secondary-text-color) text-left w-fit cursor-pointer"><p>Tilbake til {{ previousRouteName && previousRouteName != 'Ticket' ? previousRouteName.toLowerCase() : 'mine saker'}}</p></button>
+                <button v-on:click="previousRouteName != 'Ticket' ? router.back() : router.push({ name: 'Tickets' })" class="text-(--secondary-text-color) text-left w-fit cursor-pointer"><p>Tilbake til {{ previousRouteName && previousRouteName != 'Ticket' ? previousRouteName.toLowerCase() : 'mine saker'}}</p></button>
                 <form v-if="ticket.createdByUser?.id == userStore.user?.id && userStore.user?.role == 'User' && ticket.status != 'Closed'" @submit.prevent="ticketForm.status = 'Closed'; updateTicket()">
                     <button class="bg-red-500 px-3 py-1 rounded-lg text-sm text-white font-bold cursor-pointer">Avlsutt ticket</button>
                 </form>

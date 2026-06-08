@@ -28,7 +28,7 @@ const props = defineProps({
  * Says to the parent that he needs to update the form with the modelvalue.
  */
 
-const emit = defineEmits('update:modelValue');
+const emit = defineEmits(['update:modelValue']);
 
 </script>
 

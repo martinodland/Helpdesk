@@ -12,6 +12,7 @@ import { convertToReadable, customFetch } from '@/router/index.js';
  */
 
 const tickets = ref([]);
+const totalTickets = ref(null);
 const settings = ref(null);
 
 /**
@@ -34,10 +35,9 @@ async function retrieveTickets(){
 
     const data = await response.json();
 
-    tickets.value = data.tickets;
+    tickets.value = data.tickets.slice(-5);
 
-    console.log(tickets.value)
-
+    totalTickets.value = data.tickets.length;
   }catch(error){
     console.log("Failed retrieving tickets: ", error);
   }
@@ -112,7 +112,7 @@ onMounted(() => {
         <div class="flex flex-row justify-between pb-6">
           <p class="font-bold" v-if="userStore.user?.role !== 'Admin'">Mine nyeste saker</p>
           <p class="font-bold" v-else>Nyeste saker</p>
-          <RouterLink class="text-(--main-theme-color) font-medium" to="/tickets">Se alle {{ tickets.length }}</RouterLink>
+          <RouterLink class="text-(--main-theme-color) font-medium" to="/tickets">Se alle {{ totalTickets }}</RouterLink>
         </div>
         <div class="overflow-y-auto flex-1 min-h-120">
           <div v-for="ticket in tickets">
