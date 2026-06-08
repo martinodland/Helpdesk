@@ -123,7 +123,7 @@ async function retrieveTicket(){
     ticketForm.priority = ticket.value.priority;
 
   }catch(error){
-    console.log("Failed retrieving ticket: ", error);
+    router.push({ name: 'NotFound' });
   }
 }
 
@@ -185,6 +185,24 @@ async function updateNoteOnTicket(noteId) {
 }
 
 /**
+ * Function that deletes ticket.
+ */
+
+async function deleteTicket() {
+    try{
+        response = await customFetch(`tickets/${route.params.id}`, 'DELETE');
+
+        if(!response.ok){
+            console.log("Could not delete ticket: ", ticket)
+        }
+
+        router.push({ name: 'Tickets'});
+    }catch(error){
+        console.log("Could not delete ticket: ", ticket)
+    }
+}
+
+/**
  * Color for priority.
  */
 
@@ -240,8 +258,11 @@ onMounted(() => {
         <div class="bg-(--main-background) h-fit min-h-full p-6 flex flex-col gap-2">
             <div class="flex flex-row justify-between">
                 <button v-on:click="previousRouteName && previousRouteName != 'Ticket' ? router.back() : router.push({ name: 'Tickets' })" class="text-(--secondary-text-color) text-left w-fit cursor-pointer"><p>Tilbake til {{ previousRouteName && previousRouteName != 'Ticket' ? previousRouteName.toLowerCase() : 'mine saker'}}</p></button>
-                <form v-if="ticket.createdByUser?.id == userStore.user?.id && ticket.status != 'Closed'" @submit.prevent="ticketForm.status = 'Closed'; updateTicket()">
+                <form v-if="ticket.createdByUser?.id == userStore.user?.id && userStore.user?.role == 'User' && ticket.status != 'Closed'" @submit.prevent="ticketForm.status = 'Closed'; updateTicket()">
                     <button class="bg-red-500 px-3 py-1 rounded-lg text-sm text-white font-bold cursor-pointer">Avlsutt ticket</button>
+                </form>
+                <form v-if="userStore.user?.role == 'Admin'" @submit.prevent="deleteTicket()">
+                    <button class="bg-red-500 px-3 py-1 rounded-lg text-sm text-white font-bold cursor-pointer">Slett ticket</button>
                 </form>
             </div>
             <div class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex flex-col gap-3">

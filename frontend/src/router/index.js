@@ -12,7 +12,7 @@ export const previousRouteName = ref(null)
 
 const routes = [
   {
-    path: '/', redirect: { name: 'Login' },
+    path: '/', redirect: { name: 'Dashboard' },
   },
   {
     path: '/overview', component: () => import('../pages/Overview.vue'), name: 'Dashboard',
@@ -34,6 +34,9 @@ const routes = [
   },
   {
     path: '/settings', component: () => import('../pages/Settings.vue'), name: 'Settings'
+  },
+  {
+    path: '/:pathMatch(.*)*', component: () => import('../pages/NotFound.vue'), name: 'NotFound'
   }
 ];
 
