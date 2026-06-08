@@ -86,6 +86,16 @@ public class AuthController(ApplicationDbContext _dbContext, CookieService _cook
 
         await _dbContext.SaveChangesAsync();
 
+        var setting = new Setting
+        {
+            UserId = user.Id,
+            StatusOverview = "true",
+            ShowNewestTickets = "false",
+            ShowMyTickets = "true"
+        };
+
+        await _dbContext.Settings.AddAsync(setting);
+
         if(!await _cookie.CreateCookies(user)) return Unauthorized(new {  message = "Couldnt store cookies." });
 
         await _dbContext.SaveChangesAsync();

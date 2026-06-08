@@ -19,7 +19,7 @@ const notes = ref({});
 let editMode = ref(false);
 
 /**
- * Store.
+ * Stores.
  */
 
 const userStore = useUserStore();

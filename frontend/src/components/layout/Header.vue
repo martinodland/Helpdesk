@@ -39,7 +39,9 @@ async function logout() {
             console.log("Could not log out the user!");
         }
 
-        router.push({ name: Login });
+        userStore.user = null;
+
+        router.push({ name: 'Login' });
     }catch(error){
         console.log("Could not log out the user!");
     }

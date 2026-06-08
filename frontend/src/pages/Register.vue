@@ -5,12 +5,19 @@ import TextInput from '@/components/form/TextInput.vue';
 import { RouterLink, useRouter } from 'vue-router';
 import { customFetch } from '@/router/index.js';
 import { reactive } from 'vue';
+import { useUserStore } from '@/stores/useUserStore';
 
 /**
  * Router
  */
 
 const router = useRouter();
+
+/**
+ * Stores
+ */
+
+const userStore = useUserStore();
 
 /**
  * Form
@@ -36,6 +43,8 @@ async function register() {
             return;
         }
         
+        await userStore.fetchUser();
+
         router.push({ name: 'Dashboard' });
     }catch(error){
         console.log("error: ", error);

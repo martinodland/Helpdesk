@@ -2,6 +2,7 @@
 import SelectInput from '@/components/form/SelectInput.vue';
 import DashboardLayout from '@/layout/DashboardLayout.vue';
 import { customFetch } from '@/router';
+import { useUserStore } from '@/stores/useUserStore';
 import { onMounted, reactive, ref, computed } from 'vue';
 
 /**
@@ -10,6 +11,12 @@ import { onMounted, reactive, ref, computed } from 'vue';
 
 const showMessage = ref(null);
 let settings = ref([]);
+
+/**
+ * Stores
+ */
+
+const userStore = useUserStore();
 
 /**
  * Form.
@@ -92,8 +99,8 @@ onMounted(() => {
                     <p class="text-(--secondary-text-color)">Her kan du styre brukerinstillingene dine for Helpdesk.</p>
                     <form class="flex flex-col gap-2 pt-0.5" @submit.prevent="setSettings()">
                         <SelectInput v-model="form.statusOverview" :required="false" label="Vis sak status oversikt" :values="{false: 'Av', true: 'Aktivert'}" />
-                        <SelectInput v-model="form.showNewestTickets" :required="false" label="Vis nyeste saker" :values="{false: 'Av', true: 'Aktivert'}"  />
-                        <SelectInput v-model="form.showMyTickets" :required="false" label="Vis mine saker" :values="{false: 'Av', true: 'Aktivert'}"  />
+                        <SelectInput v-if="userStore.user?.role === 'Admin'" v-model="form.showNewestTickets" :required="false" label="Vis nyeste saker" :values="{false: 'Av', true: 'Aktivert'}"  />
+                        <SelectInput v-if="userStore.user?.role === 'User'" v-model="form.showMyTickets" :required="false" label="Vis mine saker" :values="{false: 'Av', true: 'Aktivert'}"  />
                         <button class="bg-(--main-theme-color) text-white font-bold lg:px-6 py-4 rounded-lg cursor-pointer">Lagre innstillinger</button>
                     </form>
                     <p class="text-(--secondary-text-color) pt-2" v-if="showMessage">Lagret Instillinger</p>
