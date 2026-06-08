@@ -76,8 +76,6 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
 
         int userId = int.Parse(User.FindFirstValue("id")!);
 
-        string userRole = User.FindFirstValue("role")!;
-
         if (userId != ticket.CreatedByUserId) return StatusCode(403, new { message = "You dont have access to this ticket!"} );
 
         if (dto.Status is not null) ticket.Status = dto.Status;

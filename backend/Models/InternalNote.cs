@@ -6,8 +6,6 @@ public class InternalNote
 
     public required int TicketId { get; set; }
 
-    public Ticket? Ticket { get; set; }
-
     public User? User { get; set; }
 
     public required int UserId { get; set; }
