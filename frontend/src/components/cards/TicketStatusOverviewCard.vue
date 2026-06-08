@@ -1,6 +1,6 @@
 <script setup>
 
-import { EnvelopeIcon } from '@heroicons/vue/24/outline';
+import { EnvelopeIcon, EnvelopeOpenIcon, CheckCircleIcon } from '@heroicons/vue/24/outline';
 import { computed } from 'vue';
 
 /**
@@ -12,7 +12,7 @@ const props = defineProps({
         type: Number,
         default: 0
     },
-    ticketTypeStatus: {
+    label: {
         type: String,
         default: "Åpne saker"
     },
@@ -27,6 +27,8 @@ const props = defineProps({
 
 const icons = {
   EnvelopeIcon: EnvelopeIcon,
+  EnvelopeOpenIcon: EnvelopeOpenIcon,
+  CheckCircleIcon: CheckCircleIcon
 }
 
 /**
@@ -45,7 +47,7 @@ const selectedIcon = computed(() => icons[props.icon]);
             </div>
             <div class="flex flex-col my-auto">
                 <p class="font-bold text-2xl">{{ props.amountOfTickets }}</p>
-                <p class="text-sm text-(--secondary-text-color)">{{ props.ticketTypeStatus }}</p>
+                <p class="text-sm text-(--secondary-text-color)">{{ props.label }}</p>
             </div>
         </div>
     </div>

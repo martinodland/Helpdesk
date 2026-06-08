@@ -19,7 +19,7 @@ public class AuthController(ApplicationDbContext _dbContext, CookieService _cook
     [HttpGet]
     [Authorize]
     [Route("me")]
-    public async Task<ActionResult> me()
+    public async Task<ActionResult> Me()
     {
         int userId = int.Parse(User.FindFirstValue("id")!);
 
@@ -48,6 +48,19 @@ public class AuthController(ApplicationDbContext _dbContext, CookieService _cook
         await _dbContext.SaveChangesAsync();
 
         return Ok(new { message = "User successfully logged in!" });
+    }
+
+    [HttpDelete]
+    [Authorize]
+    [Route("logout")]
+    [CsrfHeader]
+    public async Task<ActionResult> Logout()
+    {
+        int userId = int.Parse(User.FindFirstValue("id")!);
+
+        await _cookie.DestroyCookies(userId);
+
+        return Ok(new { message = "User successfully logged out!"});
     }
 
     // Register the user.

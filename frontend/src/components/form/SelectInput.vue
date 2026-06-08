@@ -1,6 +1,4 @@
 <script setup>
-import { ref } from 'vue';
-
 
 /**
  * Props.
@@ -22,10 +20,6 @@ const props = defineProps({
         type: Object,
         default: {}
     },
-    lastClicked: {
-        type: String,
-        default: ''
-    }
 });
 
 /**
@@ -34,7 +28,7 @@ const props = defineProps({
  * Says to the parent that he needs to update the form with the modelvalue.
  */
 
-const emit = defineEmits(['update:modelValue', 'update:lastClicked']);
+const emit = defineEmits('update:modelValue');
 
 </script>
 
@@ -46,7 +40,7 @@ const emit = defineEmits(['update:modelValue', 'update:lastClicked']);
         </div>
         <div class="flex flex-row gap-2">
             <div v-for="(value, key) in props.values">
-                <div v-on:click="emit('update:lastClicked', key); emit('update:modelValue', key)" :class="lastClicked == key ? 'bg-(--main-theme-color)! text-white!' : ''" class="rounded-xl border-2 border-gray-300 bg-white p-2 text-(--secondary-text-color) font-medium px-4 cursor-pointer">
+                <div v-on:click="emit('update:modelValue', key);" :class="modelValue == key ? 'bg-(--main-theme-color)! text-white!' : ''" class="rounded-xl border-2 border-gray-300 bg-white p-2 text-(--secondary-text-color) font-medium px-4 cursor-pointer">
                     <p class="text-sm lg:text-md">{{ value }}</p>
                 </div>
             </div>

@@ -1,6 +1,7 @@
 namespace HelpDesk.Services.Auth;
 
 using HelpDesk.Models;
+using Microsoft.EntityFrameworkCore;
 
 public class CookieService(ApplicationDbContext _dbContext, IHttpContextAccessor _context, JwtTokenService _jwtToken, RefreshTokenService _refreshToken)
 {
@@ -38,6 +39,35 @@ public class CookieService(ApplicationDbContext _dbContext, IHttpContextAccessor
                 Expires = DateTime.UtcNow.AddDays(7)
             });
             
+
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    // Destroy cookies and remove refreshtoken from db.
+
+    public async Task<bool> DestroyCookies(int userId)
+    {
+        try
+        {
+            _context.HttpContext.Response.Cookies.Delete("accessToken");
+
+            _context.HttpContext.Response.Cookies.Delete("refreshToken");
+
+            RefreshToken? refreshToken = await _dbContext.RefreshTokens.FirstOrDefaultAsync(searchedRefreshToken => searchedRefreshToken.UserId == userId);
+
+            if( refreshToken is null)
+            {
+                return true;
+            }
+
+            _dbContext.Remove(refreshToken);
+
+            await _dbContext.SaveChangesAsync();
 
             return true;
         }

@@ -30,5 +30,14 @@ public static class DataSeeder
 
         _dbContext.Tickets.AddRange(tickets);
         _dbContext.SaveChanges();
+
+        var settings = new List<Setting>
+        {
+            new() { ShowMyTickets = "true", ShowNewestTickets = "true", StatusOverview = "true", UserId = users[0].Id},
+            new() { ShowMyTickets = "true", ShowNewestTickets = "false", StatusOverview = "true", UserId = users[1].Id}
+        };
+
+        _dbContext.Settings.AddRange(settings);
+        _dbContext.SaveChanges();
     }
 }

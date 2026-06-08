@@ -12,6 +12,7 @@ import { convertToReadable, customFetch } from '@/router/index.js';
  */
 
 const tickets = ref([]);
+const settings = ref(null);
 
 /**
  * Stores
@@ -35,9 +36,47 @@ async function retrieveTickets(){
 
     tickets.value = data.tickets;
 
+    console.log(tickets.value)
+
   }catch(error){
     console.log("Failed retrieving tickets: ", error);
   }
+}
+
+/**
+ * Function that retrieves the user settings.
+ */
+
+async function retrieveSettings(){
+ try {
+  let response = await customFetch('settings', 'GET');
+
+  if(!response.ok){
+    console.log("Could not retrieve settings");
+  }
+
+  const data = await response.json();
+
+  settings.value = data.settings;
+
+  console.log(settings.value  )
+
+ }catch(error){
+  console.log("Could not retrieve settings: ", error)
+ }
+}
+
+/**
+ * Function that counts how many times the find appears in the object.
+ * 
+ * @param {array} array The object to search.
+ * @param {string} find The value to search for.
+ * 
+ * @returns Occurences
+ */
+
+function countOccurencesInArray(array, find){
+  return array.filter((obj) => obj.status === find).length;
 }
 
 /**
@@ -46,13 +85,14 @@ async function retrieveTickets(){
 
 onMounted(() => {
   retrieveTickets();
+  retrieveSettings();
 });
 
 </script>
 
 <template>
   <DashboardLayout>
-    <div class="bg-(--main-background) h-full p-6 flex flex-col gap-2">
+    <div class="bg-(--main-background) h-fit min-h-full  p-6 flex flex-col gap-2">
       <div class="flex flex-col gap-2 lg:flex-row justify-between">
         <div class="flex flex-col">
           <p class="text-xl font-bold">Hei, {{ userStore.user?.name }}</p>
@@ -63,18 +103,18 @@ onMounted(() => {
           <p>Registrer ny sak</p>
         </RouterLink>
       </div>
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1.5">
-        <TicketStatusOverviewCard />
-        <TicketStatusOverviewCard />
-        <TicketStatusOverviewCard />
+      <div v-if="settings?.statusOverview == 'true'" class="grid grid-cols-1 lg:grid-cols-2 gap-4 pt-1.5">
+        <TicketStatusOverviewCard :amountOfTickets="countOccurencesInArray(tickets, 'Open')" />
+        <TicketStatusOverviewCard :amountOfTickets="countOccurencesInArray(tickets, 'InProgress')" icon="EnvelopeOpenIcon" label="Påbegynte saker"/>
+        <TicketStatusOverviewCard :amountOfTickets="countOccurencesInArray(tickets, 'Closed')" icon="CheckCircleIcon" label="Fullførte saker" />
       </div>
-      <div class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex-1 min-h-0 flex flex-col">
+      <div v-if="settings?.showMyTickets == 'true' || settings?.showNewestTickets == 'true'" class="bg-white border-(--secondary-background-border) border-2 rounded-lg p-6 mt-2 flex-1 flex flex-col">
         <div class="flex flex-row justify-between pb-6">
           <p class="font-bold" v-if="userStore.user?.role !== 'Admin'">Mine nyeste saker</p>
           <p class="font-bold" v-else>Nyeste saker</p>
           <RouterLink class="text-(--main-theme-color) font-medium" to="/tickets">Se alle {{ tickets.length }}</RouterLink>
         </div>
-        <div class="overflow-y-auto flex-1 min-h-0">
+        <div class="overflow-y-auto flex-1 min-h-120">
           <div v-for="ticket in tickets">
             <SingleTicketCard :ticketId="ticket.id" :ticketStatus="ticket.status" :ticketTitle="ticket.title" :ticketCreated="convertToReadable(ticket.createdAt)" :ticketUpdated="ticket.updatedAt ?? 'Ikke oppdatert'" :ticketPriority="ticket.priority" />
           </div>

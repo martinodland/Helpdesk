@@ -16,4 +16,13 @@ public class ApplicationDbContext : DbContext
 
     public DbSet<RefreshToken> RefreshTokens { get; set; }
 
+    public DbSet<Setting> Settings { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.Entity<Setting>()
+            .HasIndex(setting => setting.UserId)
+            .IsUnique();
+    }
+
 }

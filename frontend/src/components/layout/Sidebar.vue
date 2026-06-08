@@ -1,7 +1,13 @@
 <script setup>
 import { AcademicCapIcon } from '@heroicons/vue/24/outline';
 import SidebarMenu from '../sidebar/SidebarMenu.vue';
+import { useUserStore } from '@/stores/useUserStore.js';
 
+/**
+ * Stores.
+ */
+
+const userStore = useUserStore();
 
 </script>
 
@@ -18,8 +24,9 @@ import SidebarMenu from '../sidebar/SidebarMenu.vue';
         </div>
         <div class="flex flex-col w-full gap-1">
             <SidebarMenu label="Ovesikt" href="/overview" />
-            <SidebarMenu label="Mine saker" href="/tickets" icon="ListBulletIcon" />
+            <SidebarMenu :label="userStore.user?.role === 'Admin' ? 'Alle saker' : 'Mine saker'" href="/tickets" icon="ListBulletIcon" />
             <SidebarMenu label="Ny sak" href="/create" icon="PlusIcon" />
+            <SidebarMenu label="Instillinger" href="/settings" icon="Cog6ToothIcon" />
         </div>
     </div>
 </template>

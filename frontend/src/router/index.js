@@ -31,6 +31,9 @@ const routes = [
   },
   {
     path: '/tickets/:id', component: () => import('../pages/Ticket.vue'), name: 'Ticket'
+  },
+  {
+    path: '/settings', component: () => import('../pages/Settings.vue'), name: 'Settings'
   }
 ];
 

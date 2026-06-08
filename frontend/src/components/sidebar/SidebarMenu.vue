@@ -1,6 +1,6 @@
 <script setup>
 
-import { PlusIcon, ListBulletIcon,RectangleGroupIcon } from '@heroicons/vue/24/outline';
+import { PlusIcon, ListBulletIcon,RectangleGroupIcon, Cog6ToothIcon } from '@heroicons/vue/24/outline';
 import { computed } from 'vue';
 import { useRoute } from 'vue-router';
 
@@ -37,6 +37,7 @@ const icons = {
     RectangleGroupIcon: RectangleGroupIcon,
     PlusIcon: PlusIcon,
     ListBulletIcon: ListBulletIcon,
+    Cog6ToothIcon: Cog6ToothIcon
 }
 
 /**

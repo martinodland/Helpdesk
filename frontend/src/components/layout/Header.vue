@@ -1,16 +1,24 @@
 <script setup>
 
-import { convertToReadable } from '@/router';
+import { convertToReadable, customFetch } from '@/router';
 import { usePageNameStore } from '@/stores/usePageNameStore';
 import { useUserStore } from '@/stores/useUserStore';
 import { ChevronDownIcon, BellIcon, UserIcon, Bars3Icon, XMarkIcon } from '@heroicons/vue/24/solid';
 import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 /**
  * Refs.
  */
 
 const showMenu = ref(false);
+const openLogout = ref(false);
+
+/**
+ * Router.
+ */
+
+const router = useRouter();
 
 /**
  * Stores
@@ -18,6 +26,24 @@ const showMenu = ref(false);
 
 const userStore = useUserStore();
 const pageNameStore = usePageNameStore();
+
+/**
+ * Function that logs the user out.
+ */
+
+async function logout() {
+    try{
+        const response = await customFetch('auth/logout', 'DELETE');
+
+        if(!response.ok){
+            console.log("Could not log out the user!");
+        }
+
+        router.push({ name: Login });
+    }catch(error){
+        console.log("Could not log out the user!");
+    }
+}
 
 /**{{ userStore.user?.name }} {{ pageNameStore.pageName }} */
 
@@ -35,6 +61,9 @@ const pageNameStore = usePageNameStore();
                 <RouterLink v-on:click="showMenu = false" class="cursor-pointer" to="/overview">Oversikt</RouterLink>
                 <RouterLink v-on:click="showMenu = false" class="cursor-pointer" to="/tickets">Mine saker</RouterLink>
                 <RouterLink v-on:click="showMenu = false" class="cursor-pointer" to="/create">Ny sak</RouterLink>
+                <form  @submit.prevent="logout()">
+                    <button class="mr-auto">Logg ut</button>
+                </form>
             </div>
         </div>
     </div>
@@ -45,9 +74,6 @@ const pageNameStore = usePageNameStore();
             <p class="text-sm md:text-md text-(--secondary-text-color)" v-if="pageNameStore.pageName == 'Oversikt'">{{ new Date().toLocaleDateString('nb-NO') + " " + new Date().toLocaleTimeString('nb-NO').slice(0, -3) }}</p>
         </div>
         <div class="hidden md:flex flex-row w-1/2 gap-7 justify-end">
-            <div class="flex items-center">
-                <BellIcon class="size-7 text-(--secondary-text-color) cursor-pointer hover:text-(--secondary-theme-color) hover:scale-110 transition duration-200" />
-            </div>
             <div class="flex flex-row gap-4 items-center">
                 <div class="bg-(--secondary-theme-color) rounded-3xl">
                     <UserIcon class="size-10 text-white" />
@@ -57,8 +83,15 @@ const pageNameStore = usePageNameStore();
                     <p class="text-(--secondary-text-color) text-sm">{{ userStore.user?.role }}</p>
                 </div>
             </div>
-            <div class="flex items-center">
-                <ChevronDownIcon class="size-4 text-(--secondary-text-color) cursor-pointer hover:text-(--secondary-theme-color) hover:scale-110 transition duration-200" />
+            <div class="relative my-auto">
+                <button class="transition duration-200" :class="openLogout === false ? 'rotate-180' : ''" type="button" @click="openLogout = !openLogout">
+                    <ChevronDownIcon class="size-4 text-(--secondary-text-color) cursor-pointer" />
+                </button>
+                <div v-if="openLogout" class="absolute right-0 top-[46px] mt-1 bg-white border border-t-0 rounded-tr-none rounded-tl-none border-gray-200 rounded-lg shadow-lg p-2 w-32">
+                    <form @submit.prevent="logout()">
+                        <button class="cursor-pointer hover:text-red-500" @click="logout()">Logg ut</button>
+                    </form>
+                </div>
             </div>
         </div>
         <div class="flex items-center md:hidden">
