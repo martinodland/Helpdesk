@@ -33,6 +33,8 @@ async function createTicket() {
 
     if(!response.ok){
       console.log("Could not create ticket!");
+
+      return;
     }
 
     const data = await response.json();
