@@ -87,6 +87,11 @@ public class TicketController(ApplicationDbContext _dbContext): ControllerBase
             if (dto.Title is not null) ticket.Title = dto.Title;
 
             if (dto.Status is not null) ticket.Status = dto.Status;
+
+            if(userRole == "Admin")
+            {
+                if (dto.Priority is not null) ticket.Priority = dto.Priority;
+            }
         }
         else if(userRole == "Admin")
         {            
