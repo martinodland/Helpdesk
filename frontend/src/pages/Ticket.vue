@@ -89,7 +89,6 @@ async function postNoteOnTicket(){
             console.log("Failed posting note on ticket: ", response);
         }
 
-        console.log("Successfully posted note on ticket.");
         noteForm.description = null;
 
         getNotesOnTicket();
@@ -131,8 +130,6 @@ async function retrieveTicket(){
 
 async function updateTicket(){
   try{
-    console.log("udpatingticket!");
-
     const response = await customFetch(`tickets/${route.params.id}`, 'PATCH', JSON.stringify(ticketForm));
 
     if(!response.ok){
@@ -147,8 +144,6 @@ async function updateTicket(){
     ticketForm.priority = ticket.value.priority;
     
     editModeTicket.value = false;
-
-    console.log("Ticket: ", ticket.value)
 
   }catch(error){
     console.log("Failed updating ticket: ", error);

@@ -1,6 +1,6 @@
 <script setup>
 import { convertToReadable } from '@/router';
-import { computed, ref } from 'vue';
+import { computed } from 'vue';
 
 /**
  * Props.
@@ -74,11 +74,11 @@ const statusLabels = {
 }
 
 /**
- * ref
+ * Computed.
  */
 
-const activePriorityColor = ref(priorityColors[props.ticketPriority]);
-const activeStatusColor = ref(statusColors[props.ticketStatus]);
+const activePriorityColor = computed(() => priorityColors[props.ticketPriority]);
+const activeStatusColor = computed(() => statusColors[props.ticketStatus]);
 
 
 </script>
